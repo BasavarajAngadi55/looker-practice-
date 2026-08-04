@@ -48,6 +48,13 @@ view: +order_items {
       AND ${created_date} <= ${selected_anchor_date} ;;
   }
 
+  dimension: is_previous_mtd {
+    type: yesno
+    hidden: yes
+    sql: ${created_date} >= DATE_TRUNC(DATE_SUB(${selected_anchor_date}, INTERVAL 1 MONTH), MONTH)
+      AND ${created_date} <= DATE_SUB(${selected_anchor_date}, INTERVAL 1 MONTH) ;;
+  }
+
   dimension: is_qtd {
     type: yesno
     hidden: yes
@@ -86,6 +93,14 @@ view: +order_items {
     type: sum
     sql: ${sale_price} ;;
     filters: [is_mtd: "yes"]
+    value_format_name: usd
+  }
+
+  measure: sales_previous_mtd {
+    label: "Previous MTD Sales"
+    type: sum
+    sql: ${sale_price} ;;
+    filters: [is_previous_mtd: "yes"]
     value_format_name: usd
   }
 
