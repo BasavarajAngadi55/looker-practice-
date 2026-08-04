@@ -17,7 +17,7 @@ view: +order_items {
   filter: select_date {
     type: date
     label: "Select Reference Date"
-    description: "Anchor date used to dynamically calculate Today, Yesterday, MTD, QTD, and YTD sales."
+    description: "Anchor date used to dynamically calculate Today, Yesterday, WTD, MTD, QTD, and YTD sales."
   }
 
   # ------------------------------------------------------------------
@@ -39,6 +39,20 @@ view: +order_items {
     type: yesno
     hidden: yes
     sql: ${created_date} = DATE_SUB(${selected_anchor_date}, INTERVAL 1 DAY) ;;
+  }
+
+  dimension: is_wtd {
+    type: yesno
+    hidden: yes
+    sql: ${created_date} >= DATE_TRUNC(${selected_anchor_date}, WEEK)
+      AND ${created_date} <= ${selected_anchor_date} ;;
+  }
+
+  dimension: is_previous_wtd {
+    type: yesno
+    hidden: yes
+    sql: ${created_date} >= DATE_TRUNC(DATE_SUB(${selected_anchor_date}, INTERVAL 1 WEEK), WEEK)
+      AND ${created_date} <= DATE_SUB(${selected_anchor_date}, INTERVAL 1 WEEK) ;;
   }
 
   dimension: is_mtd {
@@ -102,6 +116,22 @@ view: +order_items {
     value_format_name: usd
   }
 
+  measure: sales_wtd {
+    label: "WTD Sales"
+    type: sum
+    sql: ${sale_price} ;;
+    filters: [is_wtd: "yes"]
+    value_format_name: usd
+  }
+
+  measure: sales_previous_wtd {
+    label: "Previous WTD Sales"
+    type: sum
+    sql: ${sale_price} ;;
+    filters: [is_previous_wtd: "yes"]
+    value_format_name: usd
+  }
+
   measure: sales_mtd {
     label: "MTD Sales"
     type: sum
@@ -148,5 +178,12 @@ view: +order_items {
     sql: ${sale_price} ;;
     filters: [is_previous_ytd: "yes"]
     value_format_name: usd
+  }
+
+  measure: ytd_sales_growth {
+    label: "YTD Sales Growth %"
+    type: number
+    sql: (${sales_ytd} - ${sales_previous_ytd}) / NULLIF(${sales_previous_ytd}, 0) ;;
+    value_format_name: percent_1
   }
 }
