@@ -69,6 +69,13 @@ view: +order_items {
       AND ${created_date} <= ${selected_anchor_date} ;;
   }
 
+  dimension: is_previous_ytd {
+    type: yesno
+    hidden: yes
+    sql: ${created_date} >= DATE_TRUNC(DATE_SUB(${selected_anchor_date}, INTERVAL 1 YEAR), YEAR)
+      AND ${created_date} <= DATE_SUB(${selected_anchor_date}, INTERVAL 1 YEAR) ;;
+  }
+
   # ------------------------------------------------------------------
   # 3. DYNAMIC KPI MEASURES
   # ------------------------------------------------------------------
@@ -117,6 +124,14 @@ view: +order_items {
     type: sum
     sql: ${sale_price} ;;
     filters: [is_ytd: "yes"]
+    value_format_name: usd
+  }
+
+  measure: sales_previous_ytd {
+    label: "Previous YTD Sales"
+    type: sum
+    sql: ${sale_price} ;;
+    filters: [is_previous_ytd: "yes"]
     value_format_name: usd
   }
 }
