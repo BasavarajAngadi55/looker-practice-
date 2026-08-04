@@ -62,6 +62,13 @@ view: +order_items {
       AND ${created_date} <= ${selected_anchor_date} ;;
   }
 
+  dimension: is_previous_qtd {
+    type: yesno
+    hidden: yes
+    sql: ${created_date} >= DATE_TRUNC(DATE_SUB(${selected_anchor_date}, INTERVAL 1 QUARTER), QUARTER)
+      AND ${created_date} <= DATE_SUB(${selected_anchor_date}, INTERVAL 1 QUARTER) ;;
+  }
+
   dimension: is_ytd {
     type: yesno
     hidden: yes
@@ -116,6 +123,14 @@ view: +order_items {
     type: sum
     sql: ${sale_price} ;;
     filters: [is_qtd: "yes"]
+    value_format_name: usd
+  }
+
+  measure: sales_previous_qtd {
+    label: "Previous QTD Sales"
+    type: sum
+    sql: ${sale_price} ;;
+    filters: [is_previous_qtd: "yes"]
     value_format_name: usd
   }
 
