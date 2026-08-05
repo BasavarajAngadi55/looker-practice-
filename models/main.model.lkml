@@ -23,11 +23,6 @@ view: +order_items {
     value_format_name: usd
   }
 
-  measure: total_orders {
-    label: "Total Orders"
-    type: count_distinct
-    sql: ${order_id} ;;
-  }
 
   dimension: days_since_created {
     label: "Days Since Order"
