@@ -54,9 +54,3 @@ explore: order_items {
     view_label: "Customers"
   }
 }
-
-explore: users {
-  label: "Users"
-  description: "Customer demographic profiles and user-level analysis."
-  group_label: "E-Commerce"
-}
