@@ -3,26 +3,55 @@ connection: "looker_partner_demo"
 include: "/views/*.view.lkml"
 
 # ------------------------------------------------------------------
-# 1. CACHING POLICY (DATAGROUP)
+# 1. CACHING POLICY
 # ------------------------------------------------------------------
 datagroup: looker_partner_demo_default_datagroup {
-  # Refreshes cache daily at midnight
   sql_trigger: SELECT CURRENT_DATE() ;;
   max_cache_age: "24 hours"
 }
 
-# Apply default caching to all explores in this model
 persist_with: looker_partner_demo_default_datagroup
 
 # ------------------------------------------------------------------
-# 2. EXPLORES
+# 2. VIEW REFINEMENTS (NEW MEASURES & DIMENSIONS)
+# ------------------------------------------------------------------
+view: +order_items {
+  measure: average_sale_price {
+    label: "Average Order Value (AOV)"
+    type: average
+    sql: ${sale_price} ;;
+    value_format_name: usd
+  }
+
+  measure: total_orders {
+    label: "Total Orders"
+    type: count_distinct
+    sql: ${order_id} ;;
+  }
+
+  dimension: days_since_created {
+    label: "Days Since Order"
+    type: number
+    sql: DATE_DIFF(CURRENT_DATE(), DATE(${created_date}), DAY) ;;
+  }
+}
+
+view: +users {
+  measure: total_users {
+    label: "Total Users"
+    type: count_distinct
+    sql: ${id} ;;
+  }
+}
+
+# ------------------------------------------------------------------
+# 3. EXPLORES
 # ------------------------------------------------------------------
 explore: order_items {
   label: "Order Items"
   description: "Primary explore for order line items, sales performance, and customer analytics."
   group_label: "E-Commerce"
 
-  # Prevents runaway queries by defaulting to a 30-day window if no date filter is applied
   conditionally_filter: {
     filters: [order_items.created_date: "30 days"]
     unless: [order_items.created_date, order_items.select_date]
