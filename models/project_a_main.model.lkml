@@ -61,7 +61,6 @@ explore: products {
 }
 
 
-
 explore: distribution_centers {}
 
 explore: inventory_items {
