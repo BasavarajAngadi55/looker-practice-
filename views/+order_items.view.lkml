@@ -180,6 +180,13 @@ view: +order_items {
     value_format_name: usd
   }
 
+  measure: wtd_sales_growth {
+    label: "WTD Sales Growth %"
+    type: number
+    sql: (${sales_wtd} - ${sales_previous_wtd}) / NULLIF(${sales_previous_wtd}, 0) ;;
+    value_format_name: percent_1
+  }
+
   measure: mtd_sales_growth {
     label: "MTD Sales Growth %"
     type: number
