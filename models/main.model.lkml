@@ -2,15 +2,7 @@ connection: "looker_partner_demo"
 
 include: "/views/*.view.lkml"
 
-# ------------------------------------------------------------------
-# 1. CACHING POLICY
-# ------------------------------------------------------------------
-datagroup: looker_partner_demo_default_datagroup {
-  sql_trigger: SELECT CURRENT_DATE() ;;
-  max_cache_age: "24 hours"
-}
 
-persist_with: looker_partner_demo_default_datagroup
 
 # ------------------------------------------------------------------
 # 2. VIEW REFINEMENTS (NEW MEASURES & DIMENSIONS)
