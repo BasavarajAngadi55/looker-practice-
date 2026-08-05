@@ -24,11 +24,6 @@ view: +order_items {
   }
 
 
-  dimension: days_since_created {
-    label: "Days Since Order"
-    type: number
-    sql: DATE_DIFF(CURRENT_DATE(), DATE(${created_date}), DAY) ;;
-  }
 }
 
 view: +users {
