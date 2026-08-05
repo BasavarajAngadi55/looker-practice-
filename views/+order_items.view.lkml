@@ -201,10 +201,4 @@ view: +order_items {
     value_format_name: percent_1
   }
 
-  measure: qtd_sales_growth {
-    label: "QTD Sales Growth %"
-    type: number
-    sql: (${sales_qtd} - ${sales_previous_qtd}) / NULLIF(${sales_previous_qtd}, 0) ;;
-    value_format_name: percent_1
-  }
 }
