@@ -43,10 +43,7 @@ view: order_items {
     timeframes: [raw, time, date, week, month, quarter, year]
     sql: ${TABLE}.shipped_at ;;
   }
-  dimension: status {
-    type: string
-    sql: ${TABLE}.status ;;
-  }
+
 
 
 }
