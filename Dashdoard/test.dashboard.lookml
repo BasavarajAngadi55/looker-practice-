@@ -1,23 +1,26 @@
 ---
-- dashboard: test
-  title: test
+- dashboard: top_10_
+  title: 'top 10 '
   preferred_viewer: dashboards-next
-  preferred_slug: pv6RUlELiVtrYaw1Yzpvus
+  description: ''
+  preferred_slug: vy5E8iIxwuMnHpEN8JlVxT
+  theme_name: ''
+  layout_granularity: granular
   layout: newspaper
   tabs:
   - name: ''
     label: ''
   elements:
-  - title: test
-    name: test
+  - title: 'top 10 '
+    name: 'top 10 '
     model: temp
     explore: order_items
     type: looker_line
     fields: [order_items.created_month, order_items.total_sales]
     fill_fields: [order_items.created_month]
     filters:
-      order_items.select_target_date: 2026/08/02
-      order_items.created_year: 12 months
+      order_items.select_target_date: 2026/08/04
+      order_items.created_year: 11 months
     sorts: [order_items.created_month desc]
     limit: 500
     column_limit: 50
@@ -51,14 +54,14 @@
       Created Year: order_items.created_year
     row: 0
     col: 0
-    width: 24
-    height: 12
+    width: 72
+    height: 24
     tab_name: ''
   filters:
   - name: Select Target Date for MTD
     title: Select Target Date for MTD
     type: field_filter
-    default_value: 2026/08/02
+    default_value: 2026/08/04
     allow_multiple_values: true
     required: false
     ui_config:
@@ -71,7 +74,7 @@
   - name: Created Year
     title: Created Year
     type: field_filter
-    default_value: 12 months
+    default_value: 11 months
     allow_multiple_values: true
     required: false
     ui_config:
