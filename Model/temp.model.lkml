@@ -14,4 +14,9 @@ persist_with: order_items_default_datagroup
 # Explore Definition
 explore: order_items {
   label: "Order Items"
+
+  access_filter: {
+    field: order_items.created_year  # <-- Replace 'created_year' with your actual year dimension name
+    user_attribute: test67
+  }
 }
