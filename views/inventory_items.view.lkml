@@ -58,4 +58,9 @@ view: inventory_items {
     type: count
     drill_fields: [id, product_name, products.name, products.id, order_items.count]
   }
+  dimension: product_skua {
+    type: string
+    sql: ${TABLE}.product_sku ;;
+}
+
 }
