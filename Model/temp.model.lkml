@@ -2,7 +2,8 @@ connection: "looker_partner_demo"
 
 # Include base views and refinement view
 include: "/views/*.view.lkml"
-include: "/**/*.dashboard.lookml"
+
+
 
 # Define Datagroup
 datagroup: order_items_default_datagroup {
