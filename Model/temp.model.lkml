@@ -11,12 +11,17 @@ datagroup: order_items_default_datagroup {
 
 persist_with: order_items_default_datagroup
 
-# Explore Definition
 explore: order_items {
   label: "Order Items"
 
   access_filter: {
-    field: order_items.created_year  # <-- Replace 'created_year' with your actual year dimension name
+    field: order_items.created_year
     user_attribute: test67
+  }
+
+  join: users {
+    type: left_outer
+    relationship: many_to_one
+    sql_on: ${order_items.user_id} = ${users.id} ;;
   }
 }
