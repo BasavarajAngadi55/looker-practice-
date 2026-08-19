@@ -1,6 +1,6 @@
 - dashboard: sample
   title: Untitled Visualization
-  model: temp
+  model: temp.model.lkml
   explore: order_items
   type: looker_line
   fields: [order_items.total_sales, users.country]
