@@ -3,7 +3,8 @@ connection: "looker_partner_demo"
 # Include base views and refinement view
 include: "/views/*.view.lkml"
 
-
+# Option 2: Target the exact folder path (Case-sensitive)
+include: "/**/*.dashboard"
 
 # Define Datagroup
 datagroup: order_items_default_datagroup {
