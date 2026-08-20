@@ -1,4 +1,4 @@
-connection: "looker_partner_demo"
+connection: "@{db_connection}"
 
 # Include view files
 include: "/views/*.view.lkml"
