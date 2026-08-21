@@ -1,25 +1,19 @@
 connection: "looker_partner_demo"
 
-include: "/**/*.view.lkml" # include all views in this project
+include: "/**/*.view.lkml"
 
 explore: order_items {
 
   join: users {
     type: left_outer
     relationship: many_to_one
-    sql_on: ${users.id} = ${order_items.id} ;;
+    sql_on: ${order_items.user_id} = ${users.id} ;;
   }
 
   join: products {
-  type: left_outer
-  relationship: many_to_one
-  sql_on: ${order_items.product_id}=${products.id} ;;
-
-  }
-
-  join: department_sales_dt {
     type: left_outer
     relationship: many_to_one
-    sql_on: ${products.department} = ${department_sales_dt.department} ;;
+    sql_on: ${order_items.product_id} = ${products.id} ;;
   }
+
 }
