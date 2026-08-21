@@ -17,9 +17,10 @@ view: month_sales {
     sql: ${TABLE}.total_sales ;;
   }
 
+  # Fixed measure definition
   measure: average_monthly_sales {
     type: average
-    sql: ${total_sales} ;;
+    sql: ${TABLE}.total_sales ;;
     value_format: "$#,##0.00"
   }
 }
