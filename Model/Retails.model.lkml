@@ -16,4 +16,11 @@ explore: order_items {
     sql_on: ${order_items.product_id} = ${products.id} ;;
   }
 
+  join: month_sales {
+    type: left_outer
+    relationship: many_to_one
+    sql_on: ${order_items.created_month} = ${month_sales.created_month} ;;
+  }
+
+
 }

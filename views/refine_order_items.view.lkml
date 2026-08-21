@@ -21,6 +21,12 @@ view: +order_items {
     hidden: yes
   }
 
+  measure: total_sales {
+    type: sum
+    sql: ${sale_price} ;;
+    value_format_name: usd
+  }
+
   # 3. YTD Sales (Returns NULL instead of $0.00 for excluded dates)
   measure: dynamic_ytd_sales {
     type: number
