@@ -3,7 +3,6 @@ connection: "looker_partner_demo"
 include: "/**/*.view.lkml"
 
 explore: order_items {
-
   join: users {
     type: left_outer
     relationship: many_to_one
@@ -16,11 +15,10 @@ explore: order_items {
     sql_on: ${order_items.product_id} = ${products.id} ;;
   }
 
-  join: month_sales {
+  join: ndt_top_ranking {
+    view_label: "TOTT - Top N Ranking"
     type: left_outer
     relationship: many_to_one
-    sql_on: ${order_items.created_month} = ${month_sales.created_month} ;;
+    sql_on: ${products.brand} = ${ndt_top_ranking.brand_name} ;;
   }
-
-
 }
