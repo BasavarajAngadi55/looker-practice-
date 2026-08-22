@@ -2,13 +2,12 @@ include: "/views/order_items.view.lkml"
 
 view: +order_items {
 
-  # 1. User Filter Picker
+  # 1. GLOBAL DATE FILTER
   filter: selected_date {
     type: date
-    description: "Select a date to calculate YTD sales up to that date"
+    description: "Global Date Filter for Dashboard Tiles & Top N Ranking"
   }
 
-  # 2. Extract Month Name/Number (Jan–Dec)
   dimension: month_name {
     type: string
     sql: FORMAT_DATE('%b', ${created_raw}) ;;
@@ -21,19 +20,14 @@ view: +order_items {
     hidden: yes
   }
 
-  measure: total_sales {
-    type: sum
-    sql: ${sale_price} ;;
-    value_format_name: usd
-  }
-
-  # 3. YTD Sales (Returns NULL instead of $0.00 for excluded dates)
+  # 2. FAILSAFE BASE MEASURES (Direct BigQuery Coalesce Logic)
   measure: dynamic_ytd_sales {
+    hidden: yes
     type: number
     sql: SUM(
       CASE
-        WHEN ${created_raw} >= TIMESTAMP(DATE_TRUNC(DATE({% date_start selected_date %}), YEAR))
-         AND ${created_raw} <= TIMESTAMP({% date_end selected_date %})
+        WHEN ${created_raw} >= TIMESTAMP(DATE_TRUNC(DATE(COALESCE({% date_start selected_date %}, '1970-01-01')), YEAR))
+         AND ${created_raw} <= COALESCE({% date_end selected_date %}, TIMESTAMP('2099-12-31'))
         THEN ${sale_price}
         ELSE NULL
       END
@@ -41,4 +35,56 @@ view: +order_items {
     value_format_name: usd
   }
 
+  measure: dynamic_ytd_count {
+    hidden: yes
+    type: number
+    sql: COUNT(
+      CASE
+        WHEN ${created_raw} >= TIMESTAMP(DATE_TRUNC(DATE(COALESCE({% date_start selected_date %}, '1970-01-01')), YEAR))
+         AND ${created_raw} <= COALESCE({% date_end selected_date %}, TIMESTAMP('2099-12-31'))
+        THEN ${id}
+        ELSE NULL
+      END
+    ) ;;
+    value_format_name: decimal_0
+  }
+
+  # 3. METRIC SELECTOR PARAMETER
+  parameter: brand_rank_measure_selection {
+    view_label: "TOTT - Top N Ranking"
+    description: "Global Metric Switcher for Dashboard Tiles & NDT Ranking"
+    type: unquoted
+    default_value: "order_items_sales_price"
+
+    allowed_value: {
+      label: "Order Items Total Sales"
+      value: "order_items_sales_price"
+    }
+    allowed_value: {
+      label: "Order Items Count"
+      value: "order_items_count"
+    }
+  }
+
+  # 4. SINGLE DYNAMIC MEASURE (Robust Liquid Matching for Unquoted Parameters)
+  measure: dynamic_measure {
+    view_label: "TOTT - Top N Ranking"
+    label_from_parameter: brand_rank_measure_selection
+    type: number
+    sql:
+      {% assign selected_metric = brand_rank_measure_selection._parameter_value | string %}
+      {% if selected_metric contains 'order_items_count' %}
+        ${dynamic_ytd_count}
+      {% else %}
+        ${dynamic_ytd_sales}
+      {% endif %} ;;
+
+    html:
+      {% assign selected_metric = brand_rank_measure_selection._parameter_value | string %}
+      {% if selected_metric contains 'order_items_count' %}
+        {{ dynamic_ytd_count._rendered_value }}
+      {% else %}
+        {{ dynamic_ytd_sales._rendered_value }}
+      {% endif %} ;;
+  }
 }

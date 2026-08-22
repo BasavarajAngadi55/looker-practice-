@@ -1,15 +1,23 @@
 view: ndt_top_ranking {
+
   derived_table: {
     explore_source: order_items {
-      bind_all_filters: yes
+
+      # Bind BOTH global dashboard controls into the NDT subquery
+      bind_filters: {
+        to_field: order_items.selected_date
+        from_field: order_items.selected_date
+      }
+      bind_filters: {
+        to_field: order_items.brand_rank_measure_selection
+        from_field: order_items.brand_rank_measure_selection
+      }
+
       column: brand_name { field: products.brand }
-      column: order_items_count { field: order_items.count }
-      # Update field name to match your actual measure in order_items.view
-      column: order_items_sales_price { field: order_items.total_sales }
+      column: dynamic_metric { field: order_items.dynamic_measure }
 
       derived_column: ranking {
-        # Reference the alias 'order_items_sales_price', NOT 'order_items.total_sales'
-        sql: RANK() OVER (ORDER BY order_items_sales_price DESC) ;;
+        sql: RANK() OVER (ORDER BY dynamic_metric DESC) ;;
       }
     }
   }
@@ -23,13 +31,12 @@ view: ndt_top_ranking {
 
   dimension: brand_rank {
     hidden: yes
-    type: number # Changed from string to number for arithmetic comparisons
+    type: number
     sql: ${TABLE}.ranking ;;
   }
 
   parameter: top_n_limit {
     type: unquoted
-    label: "Top N Selection"
     description: "Select how many top brands to show individually"
     default_value: "10"
 
@@ -40,9 +47,9 @@ view: ndt_top_ranking {
   }
 
   dimension: brand_rank_top_brands {
-    hidden: no # Unhidden so users can select it in Explore
+    hidden: no
     type: string
-    label_from_parameter: top_n_limit # Fixed parameter name
+    label_from_parameter: top_n_limit
     sql:
       CASE
         WHEN ${brand_rank} <= CAST({% parameter top_n_limit %} AS INT64)
@@ -62,41 +69,4 @@ view: ndt_top_ranking {
         ELSE '99999'
       END ;;
   }
-
-  parameter: brand_rank_measure_selection {
-    view_label: "TOTT | Top N Ranking"
-    description: "Specify which metric to rank Brands by"
-    type: unquoted
-    default_value: "order_items_count"
-
-    allowed_value: {
-      label: "Order Items Count"
-      value: "order_items_count"
-    }
-    allowed_value: {
-      label: "Order Items Total Sales"
-      value: "order_items_sales_price"
-    }
-  }
-
-  measure: dynamic_measure {
-    view_label: "TOTT | Top N Ranking"
-    label_from_parameter: brand_rank_measure_selection
-    type: number
-    sql:
-      {% if brand_rank_measure_selection._parameter_value == 'order_items_sales_price' %}
-        ${order_items.total_sales}
-      {% else %}
-        ${order_items.count}
-      {% endif %} ;;
-
-    html:
-      {% if brand_rank_measure_selection._parameter_value == 'order_items_sales_price' %}
-        {{ order_items.total_sales._rendered_value }}
-      {% else %}
-        {{ order_items.count._rendered_value }}
-      {% endif %} ;;
-  }
-
-
 }
