@@ -1,6 +1,6 @@
 view: order_items {
   sql_table_name: `looker-partners.thelook.order_items` ;;
-  drill_fields: [id]
+
 
   dimension: id {
     primary_key: yes
@@ -62,15 +62,15 @@ view: order_items {
   # ----- Sets of fields for drilling ------
   set: detail {
     fields: [
-	id,
-	users.last_name,
-	users.id,
-	users.first_name,
-	inventory_items.id,
-	inventory_items.product_name,
-	products.name,
-	products.id
-	]
+  id,
+  users.last_name,
+  users.id,
+  users.first_name,
+  inventory_items.id,
+  inventory_items.product_name,
+  products.name,
+  products.id
+  ]
   }
 
 }
